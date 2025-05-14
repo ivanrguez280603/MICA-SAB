@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diagramas - Documentación del Proyecto</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="/Diagramas/stylesdia.css">
 </head>
 <body>
 
@@ -14,13 +14,115 @@
     </nav>
 
     <section>
-        <h2>Archivos de Diagramas</h2>
+        <h2>Topología Lógica del Proyecto MICA-SAB (Detallada)</h2>
+        <p><strong>Flujo completo de información:</strong></p>
+
+        <h3>Punto A – Nodo Sensor</h3>
+        <p><strong>Dispositivo:</strong> Heltec LoRa 32 V2 (OLED integrada)</p>
+        <p><strong>Sensores conectados:</strong></p>
         <ul>
-            <li><a href="topologia_logica.png">topologia_logica.png</a></li>
-            <li><a href="conexion_hardware.png">conexion_hardware.png</a></li>
-            <li><a href="arquitectura_iot.pdf">arquitectura_iot.pdf</a></li>
-            <li><a href="flujograma_procesos.png">flujograma_procesos.png</a></li>
+            <li>pH 4502c (calidad del agua)</li>
+            <li>DS18B20 (temperatura del agua)</li>
+            <li>Botón de pánico (emergencia)</li>
         </ul>
+        <p><strong>Funciones:</strong></p>
+        <ul>
+            <li>Lee sensores físicos.</li>
+            <li>Muestra valores localmente (OLED).</li>
+            <li>Envía datos por LoRa 915 MHz hacia Punto B.</li>
+        </ul>
+
+        <h3>Punto B – Nodo Repetidor y OLED</h3>
+        <p><strong>Dispositivo:</strong> Otro Heltec LoRa 32 V2</p>
+        <p><strong>Funciones:</strong></p>
+        <ul>
+            <li>Recibe datos desde Punto A vía LoRa.</li>
+            <li>Los muestra en su pantalla OLED integrada.</li>
+            <li>Reempaqueta o procesa los datos si es necesario.</li>
+            <li>Retransmite los datos hacia Punto C por ESP-NOW.</li>
+        </ul>
+
+        <h3>Punto C – Nodo Gateway a Internet</h3>
+        <p><strong>Dispositivo:</strong> LILYGO T-SIM7070G ESP32</p>
+        <p><strong>Módulos integrados:</strong></p>
+        <ul>
+            <li>GPS (para ubicación geográfica).</li>
+            <li>SIM7070G (comunicaciones 2G/3G/4G LTE para IoT).</li>
+        </ul>
+        <p><strong>Funciones:</strong></p>
+        <ul>
+            <li>Recibe datos de Punto B por ESP-NOW.</li>
+            <li>Agrega datos de ubicación GPS (latitud/longitud).</li>
+            <li>Envía todos los datos por MQTT a través de red móvil (2G/3G).</li>
+        </ul>
+
+        <h3>Punto D – Broker MQTT en la nube</h3>
+        <p><strong>Ejemplos de brokers públicos:</strong></p>
+        <ul>
+            <li>test.mosquitto.org</li>
+            <li>broker.hivemq.com</li>
+        </ul>
+        <p><strong>Funciones:</strong></p>
+        <ul>
+            <li>Recibe los datos publicados desde Punto C.</li>
+            <li>Sirve como intermediario entre los dispositivos IoT y el servidor local (o en la nube).</li>
+        </ul>
+
+        <h3>Punto E – Servidor Local / Dashboard</h3>
+        <p><strong>Dispositivo:</strong> Orange Pi 3 LTS (2 GB RAM)</p>
+        <p><strong>Software instalado:</strong></p>
+        <ul>
+            <li>Node-RED</li>
+            <li>InfluxDB</li>
+            <li>Grafana</li>
+        </ul>
+        <p><strong>Funciones:</strong></p>
+        <ul>
+            <li>Conectarse al broker MQTT para recibir los datos del proyecto.</li>
+            <li>Visualizar parámetros como pH, temperatura, ubicación y alertas.</li>
+            <li>Generar reportes o alertas en tiempo real.</li>
+        </ul>
+
+        <h3>🔧 Resumen de tecnologías utilizadas:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Elemento</th>
+                    <th>Tecnología / Medio</th>
+                    <th>Propósito</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>LoRa (Punto A ↔ B)</td>
+                    <td>LoRa 915 MHz</td>
+                    <td>Comunicación de largo alcance</td>
+                </tr>
+                <tr>
+                    <td>ESP-NOW (Punto B → C)</td>
+                    <td>Wi-Fi 2.4 GHz peer-to-peer</td>
+                    <td>Comunicación rápida entre ESP32</td>
+                </tr>
+                <tr>
+                    <td>MQTT (Punto C → D)</td>
+                    <td>TCP/IP sobre 2G o Wi-Fi</td>
+                    <td>Envío de datos a la nube</td>
+                </tr>
+                <tr>
+                    <td>MQTT (Broker → Punto E)</td>
+                    <td>Internet o red local (TCP/IP)</td>
+                    <td>Recolección y almacenamiento de datos</td>
+                </tr>
+                <tr>
+                    <td>Node-RED, Grafana, InfluxDB</td>
+                    <td>Software en Orange Pi</td>
+                    <td>Procesamiento y visualización</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Imagen de la Topología</h3>
+        <img src="Diagrama de Solución MICA-SAB.jpg" alt="Topología Lógica del Proyecto MICA-SAB" style="max-width: 100%; height: auto;">
     </section>
 
 </body>
