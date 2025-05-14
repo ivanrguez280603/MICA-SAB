@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Software - Documentación del Proyecto</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="/Software/stylessoft.css">
 </head>
 <body>
 
@@ -14,15 +14,695 @@
     </nav>
 
     <section>
-        <h2>Archivos de Software</h2>
-        <ul>
-            <li><a href="placa1_sensores_lora.ino">placa1_sensores_lora.ino</a></li>
-            <li><a href="placa2_receptor_oled_espnow.ino">placa2_receptor_oled_espnow.ino</a></li>
-            <li><a href="placa3_sim_mqtt_gps.ino">placa3_sim_mqtt_gps.ino</a></li>
-            <li><a href="node-red-flows.json">node-red-flows.json</a></li>
-            <li><a href="scripts_mqtt_grafana_zabbix/grafana_dashboard.json">grafana_dashboard.json</a></li>
-            <li><a href="scripts_mqtt_grafana_zabbix/zabbix_config.md">zabbix_config.md</a></li>
-        </ul>
+        <h2>Descripción del Software</h2>
+        <p>
+            En esta sección se presentan los archivos de software utilizados en el proyecto MICA-SAB IoT. 
+            Estos archivos son fundamentales para la operación de los nodos sensores, la comunicación entre dispositivos y la visualización de datos.
+        </p>
+
+        <h2>Códigos de Arduino</h2>
+        <h3>1. Código para el Nodo Sensor (placa1_sensores_lora.ino)</h3>
+        <pre><code>
+#include <LoRa.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+// Pines
+#define SCK 5
+#define MISO 19
+#define MOSI 27
+#define SS 18
+#define RST 14
+#define DIO0 26
+#define BAND 915E6  // Banda LoRa (América: 915 MHz)
+
+// OLED
+#define ANCHOPANTALLA 128
+#define ALTOPANTALLA 64
+#define OLED_SDA 4  // Pin para SDA del OLED
+#define OLED_SCL 15 // Pin para SCL del OLED
+#define OLED_RST 16 // Pin para RST del OLED
+Adafruit_SSD1306 display(ANCHOPANTALLA, ALTOPANTALLA, &Wire, OLED_RST);
+
+// Sensor pH
+#define pHSense 34
+#define PH_SAMPLES 10
+float calibrationOffset = 0.0;  // Ajustar con calibración
+
+// Sensor temperatura
+#define SENSOR_PIN 17 // Pin para el sensor de temperatura
+OneWire oneWire(SENSOR_PIN);
+DallasTemperature sensors(&oneWire);
+
+// Botón y buzzer
+#define BUTTON_PIN 13
+#define BUZZER_PIN 21
+unsigned long lastDebounceTime = 0;
+const unsigned long debounceDelay = 50;  // Anti-rebote
+
+void setup() {
+    Serial.begin(115200);
+    
+    // Inicializar OLED
+    pinMode(OLED_RST, OUTPUT);
+    digitalWrite(OLED_RST, LOW);
+    delay(20);
+    digitalWrite(OLED_RST, HIGH);
+    Wire.begin(OLED_SDA, OLED_SCL);
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+        Serial.println("Error en OLED");
+        for (;;);
+    }
+    display.clearDisplay();
+    display.setTextColor(WHITE);
+    display.setTextSize(1);
+    display.setCursor(0, 0);
+    display.print("MICA-SAB Transmisora");
+    display.display();
+
+    // Inicializar LoRa
+    SPI.begin(SCK, MISO, MOSI, SS);
+    LoRa.setPins(SS, RST, DIO0);
+    if (!LoRa.begin(BAND)) {
+        Serial.println("Error en LoRa");
+        while (1);
+    }
+
+    // Inicializar sensores
+    sensors.begin();
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(BUZZER_PIN, OUTPUT);
+}
+
+float getPH() {
+    int measurings = 0;
+    for (int i = 0; i < PH_SAMPLES; i++) {
+        measurings += analogRead(pHSense);
+        delay(10);
+    }
+    float voltage = 3.3 / 4095.0 * (measurings / PH_SAMPLES);
+    return 7.0 + ((2.50 - voltage + calibrationOffset) / 0.18);  // Ajustar con buffers pH 4.0 y 7.0
+}
+
+void loop() {
+    // Leer sensores
+    float phValue = getPH();
+    sensors.requestTemperatures(); 
+    float temp = sensors.getTempCByIndex(0);
+
+    // Control de botón con anti-rebote
+    String alertStatus = "NORMAL";
+    if (digitalRead(BUTTON_PIN) == LOW && (millis() - lastDebounceTime) > debounceDelay) {
+        lastDebounceTime = millis();
+        alertStatus = "ACTIVA";
+        digitalWrite(BUZZER_PIN, HIGH);
+        delay(1000);
+        digitalWrite(BUZZER_PIN, LOW);
+    }
+
+    // Enviar por LoRa (formato: ALERTA:ACTIVA,pH:7.2,Temp:25.5)
+    LoRa.beginPacket();
+    LoRa.print("ALERTA:"); LoRa.print(alertStatus);
+    LoRa.print(",pH:"); LoRa.print(phValue, 2);
+    LoRa.print(",Temp:"); LoRa.print(temp, 2);
+    LoRa.endPacket();
+
+    // Mostrar en OLED
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.print("ALERTA: "); display.println(alertStatus);
+    display.setCursor(0, 20);
+    display.print("pH: "); display.println(phValue, 2);
+    display.setCursor(0, 40);
+    display.print("Temp: "); display.println(temp, 2);
+    display.display();
+
+    Serial.println("Enviado: ALERTA:" + alertStatus + " | pH:" + String(phValue, 2) + " | Temp:" + String(temp, 2));
+    delay(2000);
+}        </code></pre>
+
+        <h3>2. Código para el Nodo Receptor (placa2_receptor_oled_espnow.ino)</h3>
+        <pre><code>
+#include <LoRa.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <esp_now.h>
+#include <WiFi.h>
+
+// Pines LoRa
+#define SCK 5
+#define MISO 19
+#define MOSI 27
+#define SS 18
+#define RST 14
+#define DIO0 26
+#define BAND 915E6
+
+// OLED
+#define ANCHOPANTALLA 128
+#define ALTOPANTALLA 64
+#define OLED_SDA 4
+#define OLED_SCL 15 
+#define OLED_RST 16
+Adafruit_SSD1306 display(ANCHOPANTALLA, ALTOPANTALLA, &Wire, OLED_RST);
+
+// ESP-NOW (MAC de la Placa 3)
+uint8_t broadcastAddress[] = {0xcc, 0x7b, 0x5c, 0x31, 0x0d, 0x48};  // Reemplazar con MAC real
+
+typedef struct struct_message {
+    char alertStatus[16];  // "NORMAL" o "ACTIVA"
+    float phValue;
+    float tempValue;
+} struct_message;
+
+struct_message myData;
+esp_now_peer_info_t peerInfo;
+
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+    Serial.print("Envío ESP-NOW: ");
+    Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Éxito" : "Fallido");
+}
+
+void setup() {
+    Serial.begin(115200);
+
+    // Inicializar OLED
+    pinMode(OLED_RST, OUTPUT);
+    digitalWrite(OLED_RST, LOW);
+    delay(20);
+    digitalWrite(OLED_RST, HIGH);
+    Wire.begin(OLED_SDA, OLED_SCL);
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+        Serial.println("Error en OLED");
+        for (;;);
+    }
+    display.clearDisplay();
+    display.setTextColor(WHITE);
+    display.setTextSize(1);
+    display.setCursor(0, 0);
+    display.print("Placa 2 Lista");
+    display.display();
+
+    // Inicializar LoRa
+    SPI.begin(SCK, MISO, MOSI, SS);
+    LoRa.setPins(SS, RST, DIO0);
+    if (!LoRa.begin(BAND)) {
+        Serial.println("Error en LoRa");
+        while (1);
+    }
+
+    // Inicializar ESP-NOW
+    WiFi.mode(WIFI_STA);
+    if (esp_now_init() != ESP_OK) {
+        Serial.println("Error en ESP-NOW");
+        return;
+    }
+    esp_now_register_send_cb(OnDataSent);
+
+    // Configurar peer (Placa 3)
+    memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+    peerInfo.channel = 0;
+    peerInfo.encrypt = false;
+    peerInfo.ifidx = WIFI_IF_STA;
+    if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+        Serial.println("Error al agregar peer");
+        return;
+    }
+}
+
+void loop() {
+    if (LoRa.parsePacket()) {
+        String receivedData = LoRa.readString();
+
+        // Parsear datos (formato: ALERTA:ACTIVA,pH:7.2,Temp:25.5)
+        int alertIndex = receivedData.indexOf("ALERTA:");
+        int phIndex = receivedData.indexOf(",pH:");
+        int tempIndex = receivedData.indexOf(",Temp:");
+
+        if (alertIndex != -1 && phIndex != -1 && tempIndex != -1) {
+            String alertStr = receivedData.substring(alertIndex + 7, phIndex);
+            String phStr = receivedData.substring(phIndex + 4, tempIndex);
+            String tempStr = receivedData.substring(tempIndex + 6);
+
+            // Guardar en estructura
+            alertStr.toCharArray(myData.alertStatus, 16);
+            myData.phValue = phStr.toFloat();
+            myData.tempValue = tempStr.toFloat();
+
+            // Mostrar en OLED
+            display.clearDisplay();
+            display.setCursor(0, 0);
+            display.print("ALERTA: "); display.println(myData.alertStatus);
+            display.setCursor(0, 20);
+            display.print("pH: "); display.println(myData.phValue, 2);
+            display.setCursor(0, 40);
+            display.print("Temp: "); display.println(myData.tempValue, 2);
+            display.display();
+
+            // Enviar por ESP-NOW
+            esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
+            Serial.println(result == ESP_OK ? "Enviado a Placa 3" : "Error ESP-NOW");
+        }
+    }
+    delay(100);
+}        </code></pre>
+
+        <h3>3. Código para el Nodo Gateway (placa3_sim_mqtt_gps.ino)</h3>
+        <pre><code>
+#define TINY_GSM_MODEM_SIM7070
+#include <TinyGsmClient.h>
+#include <PubSubClient.h>
+#include <WiFi.h>
+#include <esp_now.h>
+
+// ========= CONFIGURACIÓN SERIAL ========= //
+#define SerialMon Serial   // Para mensajes de debug
+#define SerialAT Serial1   // Puerto serial para el módem SIM7070
+#define SerialAT_TX 27    // Pin TX para Serial1 (ajusta según tu configuración)
+#define SerialAT_RX 26    // Pin RX para Serial1 (ajusta según tu configuración)
+
+// ========= CONFIGURACIÓN GSM ========= //
+const char apn[] = "internet.itelcel.com";
+const char gprsUser[] = "webgprs";
+const char gprsPass[] = "webgprs2002";
+
+// ========= CONFIGURACIÓN MQTT ========= //
+const char* broker = "test.mosquitto.org";
+const int mqttPort = 1883;
+const char* topicData = "micasab/sensores/datos";
+
+// ========= ESTRUCTURA ESP-NOW ========= //
+#pragma pack(push, 1)
+typedef struct {
+    char alertStatus[16]; // "NORMAL" o "ACTIVA"
+    float phValue;
+    float tempValue;
+} SensorData;
+#pragma pack(pop)
+
+// ========= VARIABLES GLOBALES ========= //
+TinyGsm modem(SerialAT);
+TinyGsmClient gsmClient(modem);
+PubSubClient mqtt(gsmClient);
+SensorData incomingData;
+bool newDataReceived = false;
+bool gprsConnected = false; // Track GPRS connection status
+
+// ========= CONFIGURACIÓN DE ALERTA SMS ========= //
+const char* PHONE_NUMBERS[] = {
+    "+527711023222", // Número 1
+    "+527713868573", // Número 2
+    "+527731794479"  // Número 3
+};
+const int NUM_PHONES = sizeof(PHONE_NUMBERS) / sizeof(PHONE_NUMBERS[0]);
+unsigned long lastAlertTime = 0;
+const unsigned long alertInterval = 30 * 1000; // 30 segundos en milisegundos (para pruebas)
+//const unsigned long alertInterval = 5 * 60 * 1000; // 5 minutos en milisegundos (valor original)
+
+// ========= CONFIGURACIÓN BOTÓN DE PÁNICO ========= //
+#define PANIC_BUTTON_PIN 13  // Define el pin del botón de pánico (CAMBIADO A 13)
+bool panicButtonPressed = false;
+unsigned long lastButtonPressTime = 0;
+const unsigned long debounceDelay = 50;  // Debounce time in milliseconds
+
+// ========= FUNCIÓN CALLBACK ESP-NOW CORREGIDA ========= //
+void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *data, int len) {
+    if (len == sizeof(incomingData)) {
+        memcpy(&incomingData, data, sizeof(incomingData));
+        newDataReceived = true;
+        SerialMon.println("Datos recibidos via ESP-NOW");
+
+        // Debug: Mostrar datos recibidos
+        SerialMon.print("pH: "); SerialMon.println(incomingData.phValue);
+        SerialMon.print("Temp: "); SerialMon.println(incomingData.tempValue);
+        SerialMon.print("Alerta: "); SerialMon.println(incomingData.alertStatus);
+    } else {
+        SerialMon.print("Error de tamaño. Esperado: ");
+        SerialMon.print(sizeof(incomingData));
+        SerialMon.print(", Recibido: ");
+        SerialMon.println(len);
+    }
+}
+
+// ========= CONEXIÓN MQTT (NO BLOQUEANTE) ========= //
+unsigned long lastMqttAttemptTime = 0;
+const unsigned long mqttReconnectInterval = 10000; // 10 seconds
+
+bool mqttConnect() {
+    if (mqtt.connected()) return true;  // Already connected
+
+    unsigned long now = millis();
+    if (now - lastMqttAttemptTime >= mqttReconnectInterval) {
+        SerialMon.print("Conectando a MQTT...");
+        String clientId = "LilyGO-" + String(ESP.getEfuseMac(), HEX);
+        if (mqtt.connect(clientId.c_str())) {
+            SerialMon.println("Conectado a MQTT");
+            lastMqttAttemptTime = now;
+            return true;
+        } else {
+            SerialMon.print("Falló, rc=");
+            SerialMon.println(mqtt.state());
+            // Agregar un retraso antes de reintentar la conexión
+            delay(1000); // Esperar 1 segundo antes de reintentar
+        }
+        lastMqttAttemptTime = now;
+    }
+    return false;
+}
+
+void publishData() {
+    char payload[256];
+    snprintf(payload, sizeof(payload),
+        "{\"ph\":%.2f,\"temp\":%.2f,\"alerta\":\"%s\"}",
+        incomingData.phValue,
+        incomingData.tempValue,
+        incomingData.alertStatus);
+
+    if (mqtt.publish(topicData, payload)) {
+        SerialMon.println("Datos publicados en MQTT:");
+        SerialMon.println(payload);
+    } else {
+        SerialMon.println("Error al publicar");
+    }
+}
+
+void sendSMS(const char* phoneNumber, const char* message) {
+    SerialMon.print("Enviando SMS a ");
+    SerialMon.println(phoneNumber);
+
+    // Agregar este mensaje de depuración
+    SerialMon.println("Intentando enviar SMS...");
+
+    int smsResult = modem.sendSMS(phoneNumber, message);
+    if (smsResult) {
+        SerialMon.println("SMS enviado");
+    } else {
+        SerialMon.print("Error al enviar SMS. Código de error: ");
+        SerialMon.println(smsResult); // Imprimir el código de error
+    }
+}
+
+void panicSMS() {
+    const char* panicMessage = "¡PANICO! Se ha activado el botón de pánico.";
+    for (int i = 0; i < NUM_PHONES; i++) {
+        sendSMS(PHONE_NUMBERS[i], panicMessage);
+    }
+    SerialMon.println("Mensaje de pánico SMS enviado.");
+}
+
+bool gprsConnectWithRetry() {
+  int retries = 3;
+  while (retries > 0) {
+    SerialMon.print("Conectando a GPRS (intento ");
+    SerialMon.print(4 - retries);
+    SerialMon.println(")...");
+    if (modem.gprsConnect(apn, gprsUser, gprsPass)) {
+      SerialMon.println("Conectado a GPRS");
+      gprsConnected = true;  // Update the GPRS connection status
+      return true;
+    } else {
+      SerialMon.println("Error en conexión GPRS");
+      retries--;
+      delay(5000); // Espera 5 segundos antes de reintentar
+    }
+  }
+  SerialMon.println("Fallo al conectar a GPRS después de varios intentos.");
+  gprsConnected = false; // Update the GPRS connection status
+  return false;
+}
+
+void checkGprsConnection() {
+  if (modem.gprsConnect(apn, gprsUser, gprsPass)) {
+    if (!gprsConnected) {
+      SerialMon.println("GPRS reconectado.");
+      gprsConnected = true;
+    }
+  } else {
+    if (gprsConnected) {
+      SerialMon.println("GPRS desconectado.");
+      gprsConnected = false;
+    }
+  }
+}
+
+void setup() {
+    SerialMon.begin(115200);
+    delay(1000);
+
+    // Inicializar comunicación con módem
+    SerialAT.begin(115200, SERIAL_8N1, SerialAT_RX, SerialAT_TX); // Inicializa Serial1 con pines
+    delay(6000);
+
+    // Inicializar módem GSM
+    SerialMon.println("Iniciando módem...");
+    modem.restart();
+
+    SerialMon.println("Conectando a red...");
+    if (!gprsConnectWithRetry()) {
+        SerialMon.println("No se pudo conectar a GPRS. Reiniciando...");
+        ESP.restart();
+    }
+
+    // Configurar MQTT
+    mqtt.setServer(broker, mqttPort);
+
+    // Inicializar ESP-NOW
+    WiFi.mode(WIFI_STA);
+    if (esp_now_init() != ESP_OK) {
+        SerialMon.println("Error iniciando ESP-NOW");
+        while(1);
+    }
+
+    // Registro del callback CORREGIDO
+    esp_now_register_recv_cb(OnDataRecv);
+
+    // Configurar el pin del botón de pánico
+    pinMode(PANIC_BUTTON_PIN, INPUT_PULLUP); // Usar INPUT_PULLUP para que esté en HIGH por defecto
+
+    SerialMon.println("Sistema listo. Esperando datos...");
+}
+
+void loop() {
+    // Read the panic button state
+    bool buttonState = digitalRead(PANIC_BUTTON_PIN);
+
+    // Debounce the button
+    if (buttonState == LOW) {
+        if (millis() - lastButtonPressTime > debounceDelay) {
+            // Button is pressed and debounced
+            if (!panicButtonPressed && gprsConnected) { // Verificar gprsConnected
+                SerialMon.println("¡Botón de pánico presionado!");
+                panicButtonPressed = true;
+
+                // Send panic SMS to all numbers
+                panicSMS();
+            } else {
+                SerialMon.println("GPRS not connected, cannot send SMS!");
+            }
+            lastButtonPressTime = millis();  // Update last press time
+        }
+    } else {
+        // Button is released
+        panicButtonPressed = false;
+    }
+
+    // MQTT connection management (non-blocking)
+    mqttConnect();
+    mqtt.loop();
+
+    if (newDataReceived) {
+        // Definir rangos aceptables (ajusta estos valores según tus necesidades)
+        float phMin = 6.0;
+        float phMax = 8.0;
+        float tempMin = 15.0;
+        float tempMax = 30.0;
+
+        // Verificar si los valores están fuera de rango
+        if (incomingData.phValue < phMin || incomingData.phValue > phMax ||
+            incomingData.tempValue < tempMin || incomingData.tempValue > tempMax) {
+
+            // Verificar si ha pasado suficiente tiempo desde la última alerta
+            if (millis() - lastAlertTime >= alertInterval && gprsConnected) { // Verificar gprsConnected
+                // Crear el mensaje SMS
+                char smsMessage[200];
+                snprintf(smsMessage, sizeof(smsMessage),
+                         "¡Alerta! Valores fuera de rango:\n"
+                         "(Rango: 6.5 minimo - 8.0 maximo) Valor real pH: %.2f \n"
+                         "(Rango: 25 minimo - 40 °C maximo) Valor real Temperatura: %.2f °C \n"
+                         "Verifique los parámetros!",
+                         incomingData.phValue,
+                         incomingData.tempValue);
+
+                // Enviar el SMS a todos los números de la lista
+                for (int i = 0; i < NUM_PHONES; i++) {
+                    sendSMS(PHONE_NUMBERS[i], smsMessage);
+                }
+
+                // Actualizar el tiempo de la última alerta
+                lastAlertTime = millis();
+                SerialMon.println("SMS de alerta enviado.");  // Mensaje de depuración
+            } else {
+                SerialMon.println("Alerta suprimida (intervalo no cumplido)");
+            }
+        }
+
+        publishData();
+        newDataReceived = false;
+    }
+}        </code></pre>
+
+        <h2>Node-RED</h2>
+        <p>A continuación se muestra el flujo de Node-RED utilizado en el proyecto:</p>
+        <pre><code>
+[
+    {
+        "id": "b62ebd4ee0b4e782",
+        "type": "tab",
+        "label": "Flujo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "bb2e47ac44c17f14",
+        "type": "mqtt in",
+        "z": "b62ebd4ee0b4e782",
+        "name": "",
+        "topic": "micasab/sensores/datos",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "bc4ded3b1a4f8f4f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 140,
+        "wires": [
+            [
+                "8123702c556b5b16",
+                "8541ffd9d188ccae"
+            ]
+        ]
+    },
+    {
+        "id": "f9fa2ea2410c7677",
+        "type": "function",
+        "z": "b62ebd4ee0b4e782",
+        "name": "function 1",
+        "func": "// Imprimir el contenido del mensaje recibido para depuración\nnode.warn(msg.payload); // Mostrar el contenido en la consola de debug\n\n// Intentar convertir el string JSON a un objeto\ntry {\n    // Parsear el mensaje recibido\n    var parsedData = JSON.parse(msg.payload);\n    \n    // Verificar que los datos estén disponibles\n    if (parsedData.ph !== undefined && parsedData.temp !== undefined && parsedData.alerta) {\n        msg.payload = {\n            ph: parsedData.ph,        // Extrae el valor de pH\n            temp: parsedData.temp,    // Extrae el valor de temperatura\n            alerta: parsedData.alerta  // Extrae el estado de alerta\n        };\n        return msg; // Retorna el mensaje modificado\n    } else {\n        node.warn(\"Datos no disponibles\"); // Mensaje de advertencia en caso de error\n        return null; // No continúa si los datos no están disponibles\n    }\n} catch (e) {\n    node.warn(\"Error al parsear JSON: \" + e.message); // Manejo de errores\n    return null; // Detener el flujo si hay un error\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 260,
+        "wires": [
+            [
+                "bc7354ea1e5fe4ac"
+            ]
+        ]
+    },
+    {
+        "id": "bc7354ea1e5fe4ac",
+        "type": "debug",
+        "z": "b62ebd4ee0b4e782",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "8123702c556b5b16",
+        "type": "json",
+        "z": "b62ebd4ee0b4e782",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 230,
+        "y": 200,
+        "wires": [
+            [
+                "f9fa2ea2410c7677"
+            ]
+        ]
+    },
+    {
+        "id": "8541ffd9d188ccae",
+        "type": "debug",
+        "z": "b62ebd4ee0b4e782",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "bc4ded3b1a4f8f4f",
+        "type": "mqtt-broker",
+        "name": "Hivemq",
+        "broker": "test.mosquitto.org",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
+        </code></pre>
+        <img src="DiagramaNode-Red.jpg" alt="Flujo de Node-RED" style="max-width: 100%; height: auto;">
+
+        <h2>Grafana</h2>
+        <p>Aquí puedes ver los dashboards creados en Grafana para visualizar los datos:</p>
+        <img src="grafana-dashboard.png" alt="Dashboard de Grafana" style="max-width: 100%; height: auto;">
+
+        <h2>InfluxDB</h2>
+        <p>InfluxDB es utilizado para almacenar los datos de sensores. A continuación se muestra un ejemplo de cómo se configuran las bases de datos:</p>
+        <img src="influxdb-configuration.png" alt="Configuración de InfluxDB" style="max-width: 100%; height: auto;">
+        <p>Los datos son almacenados y consultados para análisis posterior.</p>
     </section>
 
 </body>
