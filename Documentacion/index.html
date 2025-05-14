@@ -3,24 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentación - Documentación del Proyecto</title>
-    <link rel="stylesheet" href="../styles.css">
+    <title>Documentación Completa - MICA-SAB IoT</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        h2 {
+            background-color: var(--light-color);
+            padding: 12px 15px;
+            border-left: 4px solid var(--primary-color);
+            margin-top: 40px;
+            border-radius: 4px 0 0 4px;
+            color: var(--dark-color);
+        }
+        
+        nav {
+            margin: 20px 0 30px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .document-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            transition: transform 0.3s ease;
+        }
+        
+        .document-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .document-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .note {
+            font-style: italic;
+            color: #7f8c8d;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 15px;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+        
+        .file-list {
+            list-style-type: none;
+            padding-left: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .file-item {
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .file-item:hover {
+            border-color: var(--primary-color);
+            background-color: var(--light-color);
+        }
+        
+        .file-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        .file-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .file-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .file-name {
+            font-weight: bold;
+        }
+        
+        .file-size {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            .file-list {
+                grid-template-columns: 1fr;
+            }
+            
+            nav {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Documentación Completa del Proyecto MICA-SAB IoT</h1>
+        <nav>
+            <a href="../index.html">← Volver al Inicio</a>
+            <a href="#technical">Documentación Técnica</a>
+            <a href="#files">Archivos Descargables</a>
+            <a href="#ip">Propiedad Intelectual</a>
+        </nav>
+    </header>
 
-    <h1>Documentación</h1>
-    <nav>
-        <a href="../index.html">Inicio</a>
-    </nav>
+    <main>
+        <div id="technical" class="section">
+            <h2>Documentación Técnica</h2>
+            
+            <div class="document-card">
+                <div class="document-title">1. Diseño Técnico</div>
+                <ul>
+                    <li><strong>Especificaciones de Hardware</strong>: Detalles técnicos de sensores, módulos de comunicación y componentes electrónicos</li>
+                    <li><strong>Arquitectura del Sistema</strong>: Diagramas de flujo, conexiones y protocolos de comunicación (LoRa, MQTT)</li>
+                    <li><strong>Requisitos de Instalación</strong>: Guía para el despliegue físico de dispositivos en balnearios</li>
+                    <li><strong>Esquemas Eléctricos</strong>: Diagramas completos del circuito integrado</li>
+                    <li><strong>Especificaciones de Seguridad</strong>: Normativas cumplidas y protecciones implementadas</li>
+                </ul>
+            </div>
 
-    <section>
-        <h2>Archivos de Documentación</h2>
-        <ul>
-            <li><a href="protocolo_investigacion.pdf">protocolo_investigacion.pdf</a></li>
-            <li><a href="manual_usuario.pdf">manual_usuario.pdf</a></li>
-            <li><a href="plan_negocio.pdf">plan_negocio.pdf</a></li>
-        </ul>
-    </section>
+            <div class="document-card">
+                <div class="document-title">2. Manuales de Usuario</div>
+                <ul>
+                    <li><strong>Guía Rápida de Instalación</strong>: Configuración básica en 10 pasos</li>
+                    <li><strong>Manual Completo de Operación</strong>:
+                        <ul>
+                            <li>Configuración inicial del sistema</li>
+                            <li>Interpretación de datos y alertas</li>
+                            <li>Personalización del dashboard</li>
+                            <li>Gestión de usuarios y permisos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manual de Mantenimiento</strong>:
+                        <ul>
+                            <li>Calendario de mantenimiento preventivo</li>
+                            <li>Procedimiento de calibración de sensores</li>
+                            <li>Guía de solución de problemas comunes</li>
+                            <li>Actualizaciones de firmware/software</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manual de Seguridad</strong>: Protocolos de protección de datos y privacidad</li>
+                </ul>
+            </div>
+        </div>
 
+        <div id="files" class="section">
+            <h2>Archivos de Documentación</h2>
+            <ul class="file-list">
+                <li class="file-item">
+                    <a href="pdf/REDACCIÓN DE ARTICULO CIENTIFICO  DEL CURSO.pdf" class="file-link" target="_blank" rel="noopener noreferrer">
+                        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <div class="file-info">
+                            <span class="file-name">Redacción de Articulo</span>
+                            <span class="file-size">PDF · 1.2 MB</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="file-item">
+                    <a href="pdf/Planeación estratégica MICA-SAB IoT (1).pdf" class="file-link" target="_blank" rel="noopener noreferrer">
+                        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <div class="file-info">
+                            <span class="file-name">Planeacion Estrategica</span>
+                            <span class="file-size">PDF · 3.5 MB</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="file-item">
+                    <a href="pdf/Plan de Negocios MICA-SAB.pdf" class="file-link" target="_blank" rel="noopener noreferrer">
+                        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <div class="file-info">
+                            <span class="file-name">Plan de Negocio</span>
+                            <span class="file-size">PDF · 2.8 MB</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="file-item">
+                    <a href="pdf/InformTallerInv.pdf" class="file-link" target="_blank" rel="noopener noreferrer">
+                        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <div class="file-info">
+                            <span class="file-name">Taller de Investigacion</span>
+                            <span class="file-size">PDF · 1.7 MB</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="file-item">
+                    <a href="pdf/Modelo de negocios MICA-SABdocx (1).pdf" class="file-link" target="_blank" rel="noopener noreferrer">
+                        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <div class="file-info">
+                            <span class="file-name">Modelo de Negocios</span>
+                            <span class="file-size">PDF · 2.1 MB</span>
+                        </div>
+                    </a>
+                </li>
+                <li class="file-item">
+    <a href="pdf/MICASAB_Costos (1).htm" class="file-link" target="_blank" rel="noopener noreferrer">
+        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        <div class="file-info">
+            <span class="file-name">Costos y Presupuesto</span>
+            <span class="file-size">HTML · 25 KB</span>
+        </div>
+    </a>
+</li>
+            </ul>
+        </div>
+
+        <div id="ip" class="section">
+            <h2>Propiedad Intelectual</h2>
+            <div class="document-card">
+                <div class="document-title">Protección Integral</div>
+                <ul>
+                    <li><strong>Derechos de Autor</strong>:
+                        <ul>
+                            <li>Software registrado (código fuente, algoritmos)</li>
+                            <li>Documentación técnica y manuales</li>
+                            <li>Contenidos formativos y multimedia</li>
+                        </ul>
+                    </li>
+                    <li><strong>Propiedad Industrial</strong>:
+                        <ul>
+                            <li>Marca registrada "MICA-SAB IoT"</li>
+                            <li>Patentes en trámite (sistema de comunicación)</li>
+                            <li>Diseños industriales protegidos</li>
+                            <li>Secretos comerciales (protocolos exclusivos)</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="note">
+        <p><strong>Nota importante</strong>: Toda la documentación está protegida por derechos de autor y su uso está sujeto a los términos de licencia del proyecto. Para acceder a la documentación completa o solicitar permisos especiales, contacte a nuestro equipo de soporte técnico.</p>
+        <p>Documentación actualizada al: <strong>15 de julio de 2024</strong></p>
+    </footer>
 </body>
 </html>
