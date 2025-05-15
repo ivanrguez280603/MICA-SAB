@@ -3,127 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagramas - Documentación del Proyecto</title>
-    <link rel="stylesheet" href="/Diagramas/stylesdia.css">
+    <title>Diagramas - MICA-SAB IoT</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        h2 {
+            background-color: var(--light-color);
+            padding: 12px 15px;
+            border-left: 4px solid var(--primary-color);
+            margin-top: 40px;
+            border-radius: 4px 0 0 4px;
+            color: var(--dark-color);
+        }
+        
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 25px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        
+        nav {
+            margin: 20px 0 30px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        section {
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .node-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            transition: transform 0.3s ease;
+        }
+        
+        .node-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .node-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        strong {
+            color: var(--dark-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--light-color);
+        }
+        
+        tr:hover {
+            background-color: #e8f4fc;
+        }
+        
+        .topology-image {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .note {
+            font-style: italic;
+            color: #7f8c8d;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 15px;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Diagramas del Proyecto MICA-SAB IoT</h1>
+        <nav>
+            <a href="../index.html">← Volver al Inicio</a>
+        </nav>
+    </header>
 
-    <h1>Diagramas</h1>
-    <nav>
-        <a href="../index.html">Inicio</a>
-    </nav>
+    <main>
+        <section>
+            <h2>Topología Lógica del Proyecto MICA-SAB (Detallada)</h2>
+            <p><strong>Flujo completo de información:</strong></p>
 
-    <section>
-        <h2>Topología Lógica del Proyecto MICA-SAB (Detallada)</h2>
-        <p><strong>Flujo completo de información:</strong></p>
+            <div class="node-card">
+                <div class="node-title">Punto A – Nodo Sensor</div>
+                <p><strong>Dispositivo:</strong> Heltec LoRa 32 V2 (OLED integrada)</p>
+                <p><strong>Sensores conectados:</strong></p>
+                <ul>
+                    <li>pH 4502c (calidad del agua)</li>
+                    <li>DS18B20 (temperatura del agua)</li>
+                    <li>Botón de pánico (emergencia)</li>
+                </ul>
+                <p><strong>Funciones:</strong></p>
+                <ul>
+                    <li>Lee sensores físicos.</li>
+                    <li>Muestra valores localmente (OLED).</li>
+                    <li>Envía datos por LoRa 915 MHz hacia Punto B.</li>
+                </ul>
+            </div>
 
-        <h3>Punto A – Nodo Sensor</h3>
-        <p><strong>Dispositivo:</strong> Heltec LoRa 32 V2 (OLED integrada)</p>
-        <p><strong>Sensores conectados:</strong></p>
-        <ul>
-            <li>pH 4502c (calidad del agua)</li>
-            <li>DS18B20 (temperatura del agua)</li>
-            <li>Botón de pánico (emergencia)</li>
-        </ul>
-        <p><strong>Funciones:</strong></p>
-        <ul>
-            <li>Lee sensores físicos.</li>
-            <li>Muestra valores localmente (OLED).</li>
-            <li>Envía datos por LoRa 915 MHz hacia Punto B.</li>
-        </ul>
+            <div class="node-card">
+                <div class="node-title">Punto B – Nodo Repetidor y OLED</div>
+                <p><strong>Dispositivo:</strong> Otro Heltec LoRa 32 V2</p>
+                <p><strong>Funciones:</strong></p>
+                <ul>
+                    <li>Recibe datos desde Punto A vía LoRa.</li>
+                    <li>Los muestra en su pantalla OLED integrada.</li>
+                    <li>Reempaqueta o procesa los datos si es necesario.</li>
+                    <li>Retransmite los datos hacia Punto C por ESP-NOW.</li>
+                </ul>
+            </div>
 
-        <h3>Punto B – Nodo Repetidor y OLED</h3>
-        <p><strong>Dispositivo:</strong> Otro Heltec LoRa 32 V2</p>
-        <p><strong>Funciones:</strong></p>
-        <ul>
-            <li>Recibe datos desde Punto A vía LoRa.</li>
-            <li>Los muestra en su pantalla OLED integrada.</li>
-            <li>Reempaqueta o procesa los datos si es necesario.</li>
-            <li>Retransmite los datos hacia Punto C por ESP-NOW.</li>
-        </ul>
+            <div class="node-card">
+                <div class="node-title">Punto C – Nodo Gateway a Internet</div>
+                <p><strong>Dispositivo:</strong> LILYGO T-SIM7070G ESP32</p>
+                <p><strong>Módulos integrados:</strong></p>
+                <ul>
+                    <li>GPS (para ubicación geográfica).</li>
+                    <li>SIM7070G (comunicaciones 2G/3G/4G LTE para IoT).</li>
+                </ul>
+                <p><strong>Funciones:</strong></p>
+                <ul>
+                    <li>Recibe datos de Punto B por ESP-NOW.</li>
+                    <li>Agrega datos de ubicación GPS (latitud/longitud).</li>
+                    <li>Envía todos los datos por MQTT a través de red móvil (2G/3G).</li>
+                </ul>
+            </div>
 
-        <h3>Punto C – Nodo Gateway a Internet</h3>
-        <p><strong>Dispositivo:</strong> LILYGO T-SIM7070G ESP32</p>
-        <p><strong>Módulos integrados:</strong></p>
-        <ul>
-            <li>GPS (para ubicación geográfica).</li>
-            <li>SIM7070G (comunicaciones 2G/3G/4G LTE para IoT).</li>
-        </ul>
-        <p><strong>Funciones:</strong></p>
-        <ul>
-            <li>Recibe datos de Punto B por ESP-NOW.</li>
-            <li>Agrega datos de ubicación GPS (latitud/longitud).</li>
-            <li>Envía todos los datos por MQTT a través de red móvil (2G/3G).</li>
-        </ul>
+            <div class="node-card">
+                <div class="node-title">Punto D – Broker MQTT en la nube</div>
+                <p><strong>Ejemplos de brokers públicos:</strong></p>
+                <ul>
+                    <li>test.mosquitto.org</li>
+                    <li>broker.hivemq.com</li>
+                </ul>
+                <p><strong>Funciones:</strong></p>
+                <ul>
+                    <li>Recibe los datos publicados desde Punto C.</li>
+                    <li>Sirve como intermediario entre los dispositivos IoT y el servidor local (o en la nube).</li>
+                </ul>
+            </div>
 
-        <h3>Punto D – Broker MQTT en la nube</h3>
-        <p><strong>Ejemplos de brokers públicos:</strong></p>
-        <ul>
-            <li>test.mosquitto.org</li>
-            <li>broker.hivemq.com</li>
-        </ul>
-        <p><strong>Funciones:</strong></p>
-        <ul>
-            <li>Recibe los datos publicados desde Punto C.</li>
-            <li>Sirve como intermediario entre los dispositivos IoT y el servidor local (o en la nube).</li>
-        </ul>
+            <div class="node-card">
+                <div class="node-title">Punto E – Servidor Local / Dashboard</div>
+                <p><strong>Dispositivo:</strong> Orange Pi 3 LTS (2 GB RAM)</p>
+                <p><strong>Software instalado:</strong></p>
+                <ul>
+                    <li>Node-RED</li>
+                    <li>InfluxDB</li>
+                    <li>Grafana</li>
+                </ul>
+                <p><strong>Funciones:</strong></p>
+                <ul>
+                    <li>Conectarse al broker MQTT para recibir los datos del proyecto.</li>
+                    <li>Visualizar parámetros como pH, temperatura, ubicación y alertas.</li>
+                    <li>Generar reportes o alertas en tiempo real.</li>
+                </ul>
+            </div>
 
-        <h3>Punto E – Servidor Local / Dashboard</h3>
-        <p><strong>Dispositivo:</strong> Orange Pi 3 LTS (2 GB RAM)</p>
-        <p><strong>Software instalado:</strong></p>
-        <ul>
-            <li>Node-RED</li>
-            <li>InfluxDB</li>
-            <li>Grafana</li>
-        </ul>
-        <p><strong>Funciones:</strong></p>
-        <ul>
-            <li>Conectarse al broker MQTT para recibir los datos del proyecto.</li>
-            <li>Visualizar parámetros como pH, temperatura, ubicación y alertas.</li>
-            <li>Generar reportes o alertas en tiempo real.</li>
-        </ul>
+            <h3>🔧 Resumen de tecnologías utilizadas:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Elemento</th>
+                        <th>Tecnología / Medio</th>
+                        <th>Propósito</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>LoRa (Punto A ↔ B)</td>
+                        <td>LoRa 915 MHz</td>
+                        <td>Comunicación de largo alcance</td>
+                    </tr>
+                    <tr>
+                        <td>ESP-NOW (Punto B → C)</td>
+                        <td>Wi-Fi 2.4 GHz peer-to-peer</td>
+                        <td>Comunicación rápida entre ESP32</td>
+                    </tr>
+                    <tr>
+                        <td>MQTT (Punto C → D)</td>
+                        <td>TCP/IP sobre 2G o Wi-Fi</td>
+                        <td>Envío de datos a la nube</td>
+                    </tr>
+                    <tr>
+                        <td>MQTT (Broker → Punto E)</td>
+                        <td>Internet o red local (TCP/IP)</td>
+                        <td>Recolección y almacenamiento de datos</td>
+                    </tr>
+                    <tr>
+                        <td>Node-RED, Grafana, InfluxDB</td>
+                        <td>Software en Orange Pi</td>
+                        <td>Procesamiento y visualización</td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <h3>🔧 Resumen de tecnologías utilizadas:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Elemento</th>
-                    <th>Tecnología / Medio</th>
-                    <th>Propósito</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>LoRa (Punto A ↔ B)</td>
-                    <td>LoRa 915 MHz</td>
-                    <td>Comunicación de largo alcance</td>
-                </tr>
-                <tr>
-                    <td>ESP-NOW (Punto B → C)</td>
-                    <td>Wi-Fi 2.4 GHz peer-to-peer</td>
-                    <td>Comunicación rápida entre ESP32</td>
-                </tr>
-                <tr>
-                    <td>MQTT (Punto C → D)</td>
-                    <td>TCP/IP sobre 2G o Wi-Fi</td>
-                    <td>Envío de datos a la nube</td>
-                </tr>
-                <tr>
-                    <td>MQTT (Broker → Punto E)</td>
-                    <td>Internet o red local (TCP/IP)</td>
-                    <td>Recolección y almacenamiento de datos</td>
-                </tr>
-                <tr>
-                    <td>Node-RED, Grafana, InfluxDB</td>
-                    <td>Software en Orange Pi</td>
-                    <td>Procesamiento y visualización</td>
-                </tr>
-            </tbody>
-        </table>
+            <h3>Imagen de la Topología</h3>
+            <img src="Diagrama de Solución MICA-SAB.jpg" alt="Topología Lógica del Proyecto MICA-SAB" class="topology-image">
+        </section>
+    </main>
 
-        <h3>Imagen de la Topología</h3>
-        <img src="Diagrama de Solución MICA-SAB.jpg" alt="Topología Lógica del Proyecto MICA-SAB" style="max-width: 100%; height: auto;">
-    </section>
-
+    <footer class="note">
+        <p><strong>Nota:</strong> Esta topología representa el diseño actual del sistema MICA-SAB IoT. Puede estar sujeta a mejoras y actualizaciones según los resultados de las pruebas piloto.</p>
+        <p>Última actualización: <strong>15 de julio de 2024</strong></p>
+    </footer>
 </body>
 </html>
