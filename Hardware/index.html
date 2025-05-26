@@ -1,282 +1,391 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hardware y Placas - Proyecto MICA-SAB IoT</title>
-  <style>
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f9f9f9;
-      color: #222;
-      margin: 20px 40px;
-      line-height: 1.6;
-    }
-    h1, h2, h3 {
-      color: #1a3e5b;
-      margin-top: 1.2em;
-      margin-bottom: 0.6em;
-    }
-    nav a {
-      color: #0066cc;
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-block;
-      margin-bottom: 2rem;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    ul, ol {
-      margin-left: 1.3rem;
-      margin-bottom: 1.2em;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      background-color: #fff;
-      margin-top: 1em;
-      margin-bottom: 2em;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #1a3e5b;
-      color: #fff;
-      font-weight: 600;
-    }
-    .hardware-item {
-      display: flex;
-      align-items: flex-start;
-      background-color: #ffffff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      gap: 1rem;
-      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-    }
-    .hardware-item img {
-      max-width: 180px;
-      object-fit: contain;
-      border-radius: 4px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-    }
-    .hardware-info {
-      max-width: 700px;
-    }
-    code {
-      background-color: #eee;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 0.95em;
-    }
-    /* Responsive */
-    @media (max-width: 800px) {
-      body {
-        margin: 15px;
-      }
-      .hardware-item {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-      .hardware-info {
-        max-width: 100%;
-      }
-      .hardware-item img {
-        max-width: 90%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware y Placas - MICA-SAB IoT</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        h2 {
+            background-color: var(--light-color);
+            padding: 12px 15px;
+            border-left: 4px solid var(--primary-color);
+            margin-top: 40px;
+            border-radius: 4px 0 0 4px;
+            color: var(--dark-color);
+        }
+        
+        h3 {
+            color: var(--dark-color);
+            margin-top: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        
+        nav {
+            margin: 20px 0 30px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hardware-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            transition: transform 0.3s ease;
+        }
+        
+        .hardware-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .hardware-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .hardware-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .hardware-item img {
+            max-width: 200px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .hardware-info {
+            flex: 1;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--dark-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--light-color);
+        }
+        
+        ul, ol {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background-color: #eef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #2c3e50;
+        }
+        
+        .note {
+            font-style: italic;
+            color: #7f8c8d;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 15px;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .hardware-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hardware-item img {
+                max-width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            nav {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Hardware y Placas del Proyecto MICA-SAB IoT</h1>
+        <nav>
+            <a href="../index.html">← Volver al Inicio</a>
+            <a href="#overview">Resumen</a>
+            <a href="#components">Componentes</a>
+            <a href="#connections">Conexiones</a>
+            <a href="#images">Imágenes</a>
+        </nav>
+    </header>
 
-  <h1>Hardware y Placas del Proyecto MICA-SAB IoT</h1>
+    <main>
+        <div id="overview" class="section">
+            <h2>Resumen del Proyecto</h2>
+            <div class="hardware-card">
+                <p>
+                    El proyecto MICA-SAB IoT utiliza una arquitectura distribuida de nodos basados en microcontroladores ESP32 con módulos de comunicación LoRa y NB-IoT para monitoreo en tiempo real de la calidad del agua y seguridad en balnearios. El sistema integra sensores ambientales, módulos de comunicación inalámbrica y dispositivos de alerta para garantizar la gestión eficiente del recurso hídrico y la seguridad de los usuarios.
+                </p>
+            </div>
+        </div>
 
-  <nav>
-    <a href="../index.html">← Volver al Inicio</a>
-  </nav>
+        <div id="components" class="section">
+            <h2>Lista de Placas y Componentes</h2>
+            
+            <div class="hardware-card">
+                <div class="hardware-title">Placas principales</div>
+                <ol>
+                    <li>
+                        <strong>Placa 1 (Nodo transmisor):</strong> ESP32 con módulo LoRa SX1276 (915 MHz) y pantalla OLED 0.96". Conecta sensores de temperatura DS18B20, sensor de pH 4502C, botón de pánico y buzzer.
+                    </li>
+                    <li>
+                        <strong>Placa 2 (Nodo intermedio):</strong> ESP32 con módulo LoRa SX1276 (915 MHz) y pantalla OLED 0.96". Recibe datos de Placa 1 por LoRa, muestra datos en OLED y retransmite a Placa 3 por ESP-NOW o LoRa.
+                    </li>
+                    <li>
+                        <strong>Placa 3 (Nodo final):</strong> LILYGO TTGO T-SIM7000G con ESP32-WROVER-B, módem SIM7070 para NB-IoT, GPS integrado. Recibe datos de Placa 2 y transmite vía MQTT a la nube.
+                    </li>
+                    <li>
+                        <strong>Servidor local:</strong> Orange Pi 3 LTS para almacenamiento de datos y pruebas de red LAN/WiFi.
+                    </li>
+                </ol>
+            </div>
 
-  <section>
-    <h2>Resumen del Proyecto</h2>
-    <p>
-      El proyecto MICA-SAB IoT utiliza una arquitectura distribuida de nodos basados en microcontroladores ESP32 con módulos de comunicación LoRa y NB-IoT para monitoreo en tiempo real de la calidad del agua y seguridad en balnearios. El sistema integra sensores ambientales, módulos de comunicación inalámbrica y dispositivos de alerta para garantizar la gestión eficiente del recurso hídrico y la seguridad de los usuarios.
-    </p>
-  </section>
+            <div class="hardware-card">
+                <div class="hardware-title">Componentes adicionales</div>
+                <ul>
+                    <li>Resistencia pull-up de 4.7kΩ para sensor DS18B20</li>
+                    <li>Cables y conectores para interconexión de sensores y placas</li>
+                    <li>Fuente de alimentación estable para las placas y sensores</li>
+                    <li>Protoboard y PCB personalizado para montaje</li>
+                    <li>Carcasas protectoras para los nodos exteriores</li>
+                </ul>
+            </div>
+        </div>
 
-  <section>
-    <h2>Lista de Placas y Componentes</h2>
+        <div id="connections" class="section">
+            <h2>Detalles de Conexión y Configuración</h2>
 
-    <ol>
-      <li>
-        <strong>Placa 1 (Nodo transmisor):</strong> ESP32 con módulo LoRa SX1276 (915 MHz) y pantalla OLED 0.96". Conecta sensores de temperatura DS18B20, sensor de pH 4502C, botón de pánico y buzzer.
-      </li>
-      <li>
-        <strong>Placa 2 (Nodo intermedio):</strong> ESP32 con módulo LoRa SX1276 (915 MHz) y pantalla OLED 0.96". Recibe datos de Placa 1 por LoRa, muestra datos en OLED y retransmite a Placa 3 por ESP-NOW o LoRa.
-      </li>
-      <li>
-        <strong>Placa 3 (Nodo final):</strong> LILYGO TTGO T-SIM7000G con ESP32-WROVER-B, módem SIM7070 para NB-IoT, GPS integrado. Recibe datos de Placa 2 y transmite vía MQTT a la nube.
-      </li>
-      <li>
-        <strong>Servidor local:</strong> Orange Pi 3 LTS para almacenamiento de datos y pruebas de red LAN/WiFi.
-      </li>
-    </ol>
+            <div class="hardware-card">
+                <div class="hardware-title">Placa 1 – Nodo transmisor</div>
+                <h3>ESP32 + LoRa SX1276 + OLED + Sensores</h3>
+                
+                <p><strong>Conexiones LoRa SX1276 (SPI):</strong></p>
+                <ul>
+                    <li><code>SCK (SPI Clock)</code> → GPIO 5</li>
+                    <li><code>MISO (SPI MISO)</code> → GPIO 19</li>
+                    <li><code>MOSI (SPI MOSI)</code> → GPIO 27</li>
+                    <li><code>SS (NSS)</code> → GPIO 18</li>
+                    <li><code>RST</code> → GPIO 14</li>
+                    <li><code>DIO0 (Interrupción)</code> → GPIO 26</li>
+                    <li>Frecuencia configurada a 915 MHz</li>
+                </ul>
 
-    <h3>Componentes adicionales</h3>
-    <ul>
-      <li>Resistencia pull-up de 4.7kΩ para sensor DS18B20.</li>
-      <li>Cables y conectores para interconexión de sensores y placas.</li>
-      <li>Fuente de alimentación estable para las placas y sensores.</li>
-    </ul>
-  </section>
+                <p><strong>Conexiones Pantalla OLED (I2C):</strong></p>
+                <ul>
+                    <li><code>SDA</code> → GPIO 4</li>
+                    <li><code>SCL</code> → GPIO 15</li>
+                    <li><code>RST (opcional)</code> → GPIO 16</li>
+                </ul>
 
-  <section>
-    <h2>Detalles de Conexión y Configuración de Placas</h2>
+                <p><strong>Sensor de Temperatura DS18B20:</strong></p>
+                <ul>
+                    <li><code>Pin DATA</code> → GPIO 17</li>
+                    <li><code>Pin VCC</code> → 3.3V</li>
+                    <li><code>Pin GND</code> → Tierra</li>
+                    <li>Resistencia pull-up de 4.7 kΩ entre DATA y VCC</li>
+                </ul>
+            </div>
 
-    <h3>Placa 1 – Nodo transmisor (ESP32 + LoRa SX1276 + OLED + Sensores)</h3>
-    <p><strong>Conexiones LoRa SX1276 (SPI):</strong></p>
-    <ul>
-      <li>SCK (SPI Clock) → GPIO 5</li>
-      <li>MISO (SPI MISO) → GPIO 19</li>
-      <li>MOSI (SPI MOSI) → GPIO 27</li>
-      <li>SS (NSS) → GPIO 18</li>
-      <li>RST → GPIO 14</li>
-      <li>DIO0 (Interrupción) → GPIO 26</li>
-      <li>Frecuencia configurada a 915 MHz</li>
-    </ul>
+            <div class="hardware-card">
+                <div class="hardware-title">Placa 3 – Nodo final</div>
+                <h3>LILYGO TTGO T-SIM7000G</h3>
+                <p>
+                    Dispositivo basado en ESP32-WROVER-B con módem SIM7070G, capaz de comunicación NB-IoT, LTE y GPS. Recibe datos desde Placa 2 y transmite vía MQTT a la nube para visualización y almacenamiento.
+                </p>
+                <p><strong>Características:</strong></p>
+                <ul>
+                    <li>Comunicación inalámbrica mediante ESP-NOW o LoRa</li>
+                    <li>Conexión a internet mediante NB-IoT (SIM7070)</li>
+                    <li>GPS integrado para geolocalización en tiempo real</li>
+                    <li>Visualización de datos en monitor serial</li>
+                    <li>Batería de respaldo integrada</li>
+                </ul>
+            </div>
+        </div>
 
-    <p><strong>Conexiones Pantalla OLED (I2C):</strong></p>
-    <ul>
-      <li>SDA → GPIO 4</li>
-      <li>SCL → GPIO 15</li>
-      <li>RST (opcional, manual) → GPIO 16</li>
-    </ul>
+        <div class="section">
+            <h2>Resumen de Comunicación entre Placas</h2>
+            <div class="hardware-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Función</th>
+                            <th>Comunicación Recibe</th>
+                            <th>Comunicación Envía</th>
+                            <th>Visualización</th>
+                            <th>Componentes Principales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Placa 1</td>
+                            <td>Transmisor</td>
+                            <td>-</td>
+                            <td>LoRa 915 MHz</td>
+                            <td>OLED 0.96"</td>
+                            <td>DS18B20, pH 4502C, botón pánico, buzzer</td>
+                        </tr>
+                        <tr>
+                            <td>Placa 2</td>
+                            <td>Receptor intermedio</td>
+                            <td>LoRa 915 MHz</td>
+                            <td>ESP-NOW o LoRa</td>
+                            <td>OLED 0.96"</td>
+                            <td>Botón pánico, buzzer</td>
+                        </tr>
+                        <tr>
+                            <td>Placa 3</td>
+                            <td>Nodo final</td>
+                            <td>ESP-NOW o LoRa</td>
+                            <td>MQTT vía NB-IoT</td>
+                            <td>Monitor serial</td>
+                            <td>Módem SIM7070, GPS</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <p><strong>Sensor de Temperatura DS18B20:</strong></p>
-    <ul>
-      <li>Pin DATA → GPIO 17</li>
-      <li>Pin VCC → 3.3V</li>
-      <li>Pin GND → Tierra</li>
-      <li>Resistencia pull-up de 4.7 kΩ entre DATA y VCC</li>
-    </ul>
+        <div id="images" class="section">
+            <h2>Imágenes Representativas</h2>
+            
+            <div class="hardware-card">
+                <div class="hardware-item">
+                    <img src="Diseño sin título (3).jpg" alt="Placa ESP32 LoRa SX1276">
+                    <div class="hardware-info">
+                        <h3>Placa ESP32 LoRa SX1276 (915 MHz)</h3>
+                        <p>Esta placa es la base para el Nodo transmisor y receptor intermedio. Integra un microcontrolador ESP32, módulo de radio LoRa SX1276, y pantalla OLED para visualización local.</p>
+                        <p><strong>Características técnicas:</strong></p>
+                        <ul>
+                            <li>ESP32-WROOM-32 de doble núcleo</li>
+                            <li>Módulo LoRa SX1276 (915MHz)</li>
+                            <li>Pantalla OLED SSD1306 0.96"</li>
+                            <li>Conector para antena SMA</li>
+                            <li>Alimentación: 5V DC o USB</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hardware-card">
+                <div class="hardware-item">
+                    <img src="Diseño sin título (4).jpg" alt="LILYGO TTGO T-SIM7000G">
+                    <div class="hardware-info">
+                        <h3>LILYGO TTGO T-SIM7000G</h3>
+                        <p>Placa con ESP32-WROVER y módem SIM7070G para comunicación NB-IoT/LTE y GPS integrado. Se utiliza para la recepción final y transmisión MQTT hacia la nube.</p>
+                        <p><strong>Características técnicas:</strong></p>
+                        <ul>
+                            <li>ESP32-WROVER-B con 16MB Flash</li>
+                            <li>Módem SIM7070G (NB-IoT/LTE Cat-M1)</li>
+                            <li>GPS integrado (UBLOX MAX-7Q)</li>
+                            <li>Batería LiPo integrada</li>
+                            <li>Conector para antena LTE/GPS</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-    <p><strong>Sensor de pH 4502C (Analógico):</strong></p>
-    <ul>
-      <li>Salida analógica → GPIO 34 (ADC1_CH6)</li>
-      <li>VCC → 3.3V o 5V (según módulo)</li>
-      <li>GND → Tierra</li>
-    </ul>
-
-    <p><strong>Botón de pánico:</strong></p>
-    <ul>
-      <li>Conectado a GPIO 13</li>
-      <li>Configurado con resistencia interna de pull-up (modo INPUT_PULLUP)</li>
-      <li>Conexión a tierra al presionar el botón</li>
-    </ul>
-
-    <p><strong>Buzzer:</strong></p>
-    <ul>
-      <li>Pin positivo → GPIO 21</li>
-      <li>Pin negativo → Tierra</li>
-    </ul>
-
-    <h3>Placa 2 – Nodo intermedio (ESP32 + LoRa SX1276 + OLED)</h3>
-    <p>Configuración similar a Placa 1 para LoRa y OLED, con conexiones idénticas.</p>
-
-    <p><strong>Comunicación:</strong></p>
-    <ul>
-      <li>Recibe datos vía LoRa del Nodo transmisor (Placa 1).</li>
-      <li>Visualiza datos en pantalla OLED.</li>
-      <li>Retransmite datos hacia Placa 3 usando ESP-NOW o LoRa.</li>
-    </ul>
-
-    <p><strong>Botón de pánico y buzzer:</strong></p>
-    <ul>
-      <li>Botón conectado a GPIO 13</li>
-      <li>Buzzer conectado a GPIO 21</li>
-    </ul>
-
-    <h3>Placa 3 – Nodo final (LILYGO TTGO T-SIM7000G)</h3>
-    <p>
-      Dispositivo basado en ESP32-WROVER-B con módem SIM7070G, capaz de comunicación NB-IoT, LTE y GPS. Recibe datos desde Placa 2 y transmite vía MQTT a la nube para visualización y almacenamiento.
-    </p>
-    <p><strong>Características:</strong></p>
-    <ul>
-      <li>Comunicación inalámbrica mediante ESP-NOW o LoRa</li>
-      <li>Conexión a internet mediante NB-IoT (SIM7070)</li>
-      <li>GPS integrado para geolocalización en tiempo real</li>
-      <li>Visualización de datos en monitor serial (no tiene pantalla OLED)</li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Resumen de Comunicación entre Placas</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Placa</th>
-          <th>Función</th>
-          <th>Comunicación Recibe</th>
-          <th>Comunicación Envía</th>
-          <th>Visualización</th>
-          <th>Principales Sensores/Componentes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Placa 1</td>
-          <td>Transmisor</td>
-          <td>No aplica</td>
-          <td>LoRa 915 MHz</td>
-          <td>OLED 0.96"</td>
-          <td>DS18B20, pH 4502C, botón pánico, buzzer</td>
-        </tr>
-        <tr>
-          <td>Placa 2</td>
-          <td>Receptor intermedio / retransmisor</td>
-          <td>LoRa 915 MHz</td>
-          <td>ESP-NOW o LoRa</td>
-          <td>OLED 0.96"</td>
-          <td>Botón pánico, buzzer</td>
-        </tr>
-        <tr>
-          <td>Placa 3</td>
-          <td>Nodo final</td>
-          <td>ESP-NOW o LoRa</td>
-          <td>MQTT vía NB-IoT</td>
-          <td>Monitor serial</td>
-          <td>Módem SIM7070, GPS</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section>
-    <h2>Imágenes Representativas</h2>
-
-    <div class="hardware-item">
-      <img src="https://raw.githubusercontent.com/Arduinoluis/LoRa-ESP32/main/images/TTGO_LoRa32_V2.1.jpg" alt="Placa ESP32 LoRa SX1276" />
-      <div class="hardware-info">
-        <h3>Placa ESP32 LoRa SX1276 (915 MHz) con pantalla OLED 0.96"</h3>
-        <p>Esta placa es la base para el Nodo transmisor y receptor intermedio. Integra un microcontrolador ESP32, módulo de radio LoRa SX1276, y pantalla OLED para visualización local.</p>
-      </div>
-    </div>
-
-    <div class="hardware-item">
-      <img src="https://raw.githubusercontent.com/espressif/esp-idf/master/docs/en/api-reference/peripherals/images/TTGO-T-SIM7000G.jpg" alt="LILYGO TTGO T-SIM7000G" />
-      <div class="hardware-info">
-        <h3>LILYGO TTGO T-SIM7000G (ESP32-WROVER + SIM7070G + GPS)</h3>
-        <p>Placa con ESP32-WROVER y módem SIM7070G para comunicación NB-IoT/LTE y GPS integrado. Se utiliza para la recepción final y transmisión MQTT hacia la nube.</p>
-      </div>
-    </div>
-
-  </section>
-
+    <footer class="note">
+        <p><strong>Nota técnica:</strong> Todas las configuraciones y conexiones están validadas experimentalmente. Para cambios en la configuración, consulte la documentación técnica detallada de cada componente.</p>
+        <p>Documentación actualizada al: <strong>15 de julio de 2024</strong></p>
+    </footer>
 </body>
 </html>
